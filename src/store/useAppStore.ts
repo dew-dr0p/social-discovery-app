@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { User, Message, ChatHistory, AppState } from '../types';
+import { User, Message, AppState } from '../types';
 import { mockUsers, currentUser, generateMockMessages } from '../data/mockData';
 
 interface AppStore extends AppState {
@@ -23,21 +23,21 @@ export const useAppStore = create<AppStore>((set, get) => ({
   likeUser: (userId: string) => {
     const { discoveryPool, matches } = get();
     const user = discoveryPool.find(u => u.id === userId);
-    
+
     if (user) {
       const newMatches = [...matches, user];
       const newDiscoveryPool = discoveryPool.filter(u => u.id !== userId);
-      
+
       // Initialize chat history for the matched user
       const newChatHistory = {
         ...get().chatHistory,
-        [userId]: generateMockMessages(userId)
+        [userId]: generateMockMessages(userId),
       };
-      
+
       set({
         matches: newMatches,
         discoveryPool: newDiscoveryPool,
-        chatHistory: newChatHistory
+        chatHistory: newChatHistory,
       });
     }
   },
@@ -45,21 +45,21 @@ export const useAppStore = create<AppStore>((set, get) => ({
   passUser: (userId: string) => {
     const { discoveryPool } = get();
     const newDiscoveryPool = discoveryPool.filter(u => u.id !== userId);
-    
+
     set({
-      discoveryPool: newDiscoveryPool
+      discoveryPool: newDiscoveryPool,
     });
   },
 
   addMessage: (userId: string, message: Message) => {
     const { chatHistory } = get();
     const userMessages = chatHistory[userId] || [];
-    
+
     set({
       chatHistory: {
         ...chatHistory,
-        [userId]: [...userMessages, message]
-      }
+        [userId]: [...userMessages, message],
+      },
     });
   },
 
@@ -77,7 +77,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({
       discoveryPool: [...mockUsers],
       matches: [],
-      chatHistory: {}
+      chatHistory: {},
     });
-  }
+  },
 }));
