@@ -1,5 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
@@ -11,7 +19,7 @@ export default function ConversationScreen() {
   const { matches, getChatHistory, addMessage } = useAppStore();
   const [messageText, setMessageText] = useState('');
   const flatListRef = useRef<FlatList>(null);
-  
+
   const user = matches.find(m => m.id === chatId);
   const messages = getChatHistory(chatId as string);
 
@@ -40,15 +48,13 @@ export default function ConversationScreen() {
 
   const renderMessage = ({ item }: { item: Message }) => (
     <View
-      className={`mb-2 ${
-        item.isFromCurrentUser ? 'items-end' : 'items-start'
-      }`}
+      className={`mb-2 ${item.isFromCurrentUser ? 'items-end' : 'items-start'}`}
     >
       <View
-        className={`max-w-xs px-4 py-3 rounded-2xl ${
+        className={`max-w-xs rounded-2xl px-4 py-3 ${
           item.isFromCurrentUser
-            ? 'bg-blue-600 rounded-br-md'
-            : 'bg-gray-200 rounded-bl-md'
+            ? 'rounded-br-md bg-blue-600'
+            : 'rounded-bl-md bg-gray-200'
         }`}
       >
         <Text
@@ -59,10 +65,10 @@ export default function ConversationScreen() {
           {item.text}
         </Text>
       </View>
-      <Text className="text-xs text-gray-500 mt-1">
-        {item.timestamp.toLocaleTimeString([], { 
-          hour: '2-digit', 
-          minute: '2-digit' 
+      <Text className="mt-1 text-xs text-gray-500">
+        {item.timestamp.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
         })}
       </Text>
     </View>
@@ -71,9 +77,9 @@ export default function ConversationScreen() {
   if (!user) {
     return (
       <SafeAreaView className="flex-1 bg-gray-50">
-        <View className="flex-1 justify-center items-center px-6">
+        <View className="flex-1 items-center justify-center px-6">
           <Ionicons name="person-outline" size={80} color="#9CA3AF" />
-          <Text className="text-2xl font-bold text-gray-600 mt-4 text-center">
+          <Text className="mt-4 text-center text-2xl font-bold text-gray-600">
             User not found
           </Text>
         </View>
@@ -83,53 +89,53 @@ export default function ConversationScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <KeyboardAvoidingView 
-        className="flex-1" 
+      <KeyboardAvoidingView
+        className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         {/* Messages */}
         <FlatList
           ref={flatListRef}
           data={messages}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           renderItem={renderMessage}
           className="flex-1"
-          contentContainerStyle={{ 
-            paddingHorizontal: 16, 
-            paddingTop: 16, 
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingTop: 16,
             paddingBottom: 8,
-            flexGrow: 1
+            flexGrow: 1,
           }}
           showsVerticalScrollIndicator={false}
         />
 
         {/* Message Input */}
-        <View className="flex-row items-center px-4 py-3 bg-white border-t border-gray-100">
-          <TouchableOpacity className="p-2 mr-3">
+        <View className="flex-row items-center border-t border-gray-100 bg-white px-4 py-3">
+          <TouchableOpacity className="mr-3 p-2">
             <Ionicons name="add" size={24} color="#6B7280" />
           </TouchableOpacity>
-          
+
           <TextInput
             value={messageText}
             onChangeText={setMessageText}
             placeholder="Type a message..."
-            className="flex-1 bg-gray-100 rounded-xl px-4 py-3 text-base"
+            className="flex-1 rounded-xl bg-gray-100 px-4 py-3 text-base"
             multiline
             maxLength={500}
             onSubmitEditing={handleSendMessage}
           />
-          
+
           <TouchableOpacity
             onPress={handleSendMessage}
             disabled={messageText.trim() === ''}
-            className={`ml-3 p-3 rounded-full ${
+            className={`ml-3 rounded-full p-3 ${
               messageText.trim() === '' ? 'bg-gray-300' : 'bg-blue-600'
             }`}
           >
-            <Ionicons 
-              name="send" 
-              size={20} 
-              color={messageText.trim() === '' ? '#9CA3AF' : 'white'} 
+            <Ionicons
+              name="send"
+              size={20}
+              color={messageText.trim() === '' ? '#9CA3AF' : 'white'}
             />
           </TouchableOpacity>
         </View>
