@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
 // import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,11 +13,15 @@ export default function DiscoveryScreen() {
   const { discoveryPool, likeUser, passUser } = useAppStore();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [users, setUsers] = useState<User[]>([]);
+  const initializedRef = useRef(false);
 
   // Initialize users from discovery pool and reset when pool changes
   useEffect(() => {
-    setUsers(discoveryPool);
-    setCurrentIndex(0); // Reset to first user when pool changes
+    if (discoveryPool.length > 0) {
+      setUsers(discoveryPool);
+      setCurrentIndex(0);
+      initializedRef.current = true;
+    }
   }, [discoveryPool]);
 
   const handleSwipe = useCallback(
@@ -25,16 +29,15 @@ export default function DiscoveryScreen() {
       if (currentIndex >= users.length) return;
 
       const currentUser = users[currentIndex];
-      console.log('Handling swipe:', direction, 'for user:', currentUser.name);
-      console.log('Current index:', currentIndex, 'Total users:', users.length);
 
+      // Update store first
       if (direction === 'right') {
         likeUser(currentUser.id);
       } else {
         passUser(currentUser.id);
       }
 
-      // Move to next user
+      // Then update index
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
 
@@ -102,21 +105,15 @@ export default function DiscoveryScreen() {
         {/* Cards Container */}
         <View className="relative flex-1">
           {/* Render up to 3 cards in stack */}
-          {users.slice(currentIndex, currentIndex + 3).map((user, index) => {
-            const actualIndex = currentIndex + index;
-            console.log(
-              `Rendering card ${index}: ${user.name} (actualIndex: ${actualIndex}, stackIndex: ${index}, isTop: ${index === 0})`
-            );
-            return (
-              <UserCard
-                key={`${user.id}-${actualIndex}`}
-                user={user}
-                onSwipe={handleSwipe}
-                isTop={index === 0}
-                stackIndex={index}
-              />
-            );
-          })}
+          {users.slice(currentIndex, currentIndex + 3).map((user, index) => (
+            <UserCard
+              key={user.id}
+              user={user}
+              onSwipe={handleSwipe}
+              _isTop={index === 0}
+              stackIndex={index}
+            />
+          ))}
         </View>
 
         {/* Action Buttons */}

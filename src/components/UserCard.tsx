@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
 import Animated, {
@@ -20,7 +20,7 @@ interface UserCardProps {
   stackIndex: number;
 }
 
-export default function UserCard({
+const UserCard = memo(function UserCard({
   user,
   onSwipe,
   _isTop,
@@ -91,29 +91,20 @@ export default function UserCard({
   const panGesture = Gesture.Pan()
     .minDistance(10)
     .onStart(() => {
-      console.log('Gesture started');
+      // Gesture started
     })
     .onUpdate(event => {
       translateX.value = event.translationX;
-      console.log('Gesture updating:', event.translationX);
     })
     .onEnd(event => {
       const { translationX, velocityX } = event;
       const threshold = screenWidth * 0.3; // Reduced threshold
-      console.log('Gesture ended:', {
-        translationX,
-        velocityX,
-        threshold,
-        shouldSwipe:
-          Math.abs(translationX) > threshold || Math.abs(velocityX) > 300,
-      });
 
       const shouldSwipe =
         Math.abs(translationX) > threshold || Math.abs(velocityX) > 300;
 
       if (shouldSwipe) {
         const direction = translationX > 0 ? 'right' : 'left';
-        console.log('Swipe detected:', direction);
         // Animate the card off screen
         translateX.value = withSpring(
           direction === 'right' ? screenWidth : -screenWidth
@@ -252,4 +243,6 @@ export default function UserCard({
       </Animated.View>
     </GestureDetector>
   );
-}
+});
+
+export default UserCard;
