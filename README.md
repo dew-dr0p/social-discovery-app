@@ -1,6 +1,6 @@
 # Social Discovery App
 
-A React Native social discovery application built with Expo, featuring Tinder-style swiping, real-time chat, and modern UI components.
+A React Native social discovery application built with Expo, featuring Tinder-style swiping, real-time chat, and modern UI components. This project was developed as part of a UI assessment, demonstrating proficiency in React Native, Expo Router, TypeScript, Zustand, and Tailwind CSS.
 
 ## 🚀 Features
 
@@ -13,32 +13,48 @@ A React Native social discovery application built with Expo, featuring Tinder-st
 
 ## 🛠 Technology Stack
 
-- **Framework**: Expo SDK (Latest Stable)
-- **Language**: TypeScript
+- **Framework**: Expo SDK (Latest Stable) - Managed Workflow
+- **Language**: TypeScript for all data modeling and interfaces
 - **Styling**: Tailwind CSS (via NativeWind)
-- **Navigation**: Expo Router
-- **State Management**: Zustand
-- **Animations**: React Native Reanimated v3
-- **Gestures**: React Native Gesture Handler
+- **Navigation**: Expo Router (file-system-based routing)
+- **State Management**: Zustand (lightweight state management)
+- **Animations**: React Native Reanimated v4+ (thread-safe UI animations)
+- **Gestures**: React Native Gesture Handler (complex gesture recognition)
+- **Images**: Expo Image (optimized image handling)
 
 ## 📱 Screens
 
-### Discovery Screen
-- Swipeable user cards with gesture recognition
-- Like/Pass functionality with visual feedback
-- Smooth animations and transitions
-- Profile information display
+### Discovery Screen (Home Screen)
+
+- **Card Display**: Single dominant card at center with Name, Age, and Avatar
+- **Card Stacking**: Subsequent cards visibly stacked behind the top card
+- **Swipe Gesture**: Smooth horizontal dragging using React Native Reanimated
+- **Swipe Threshold**: 40% of screen width for swipe confirmation
+- **Visual Feedback**: "LIKE" and "NOPE" overlays with rotation and fade effects
+- **State Management**: Right swipes move users from discoveryPool to matches store
+- **Responsive Design**: Tailwind utilities for proper scaling on all viewports
 
 ### Chat Screens
-- Match list showing all connected users
-- Individual conversation screens
-- Message history with timestamps
-- Real-time message input
+
+#### Match List Screen (/chats)
+
+- Display users from Zustand matches store
+- Each item shows matched user's Avatar and Name
+- Navigation to Conversation Screen via dynamic routing (/chats/userId)
+
+#### Conversation Screen (/chats/[chatId])
+
+- Display mock message history (15 messages per conversation)
+- **Message Styling**:
+  - **Self Messages**: Right-aligned, solid background (bg-blue-600)
+  - **Other Messages**: Left-aligned, light background (bg-gray-200)
+- Persistent text input and Send button (visual only)
 
 ### Profile Screen
+
 - User statistics and match information
 - Settings and preferences
-- Discovery pool management
+- Discovery pool reset functionality
 - App information and version details
 
 ## 🏗 Project Structure
@@ -69,6 +85,7 @@ app/
 ## 🚀 Setup Instructions
 
 ### Prerequisites
+
 - Node.js (v16 or higher)
 - npm or yarn
 - Expo CLI
@@ -77,12 +94,14 @@ app/
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd social-discovery-app
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    # or
@@ -90,6 +109,7 @@ app/
    ```
 
 3. **Start the development server**
+
    ```bash
    npm start
    # or
@@ -108,10 +128,10 @@ The application uses Zustand for state management with the following structure:
 ```typescript
 interface AppStore {
   // State
-  discoveryPool: User[];     // Available users for swiping
-  matches: User[];           // Matched users
+  discoveryPool: User[]; // Available users for swiping
+  matches: User[]; // Matched users
   chatHistory: ChatHistory; // Message history by user ID
-  currentUser: User;        // Current user profile
+  currentUser: User; // Current user profile
 
   // Actions
   likeUser: (userId: string) => void;
@@ -133,6 +153,7 @@ The app uses NativeWind for Tailwind CSS integration:
 - **Babel Config**: Includes NativeWind plugin
 
 ### Key Tailwind Features Used:
+
 - Responsive design utilities
 - Color system and gradients
 - Spacing and sizing utilities
@@ -144,15 +165,18 @@ The app uses NativeWind for Tailwind CSS integration:
 The app uses file-system-based routing with Expo Router:
 
 ### Tab Navigation (`(tabs)/_layout.tsx`)
+
 - **Discovery**: Main swiping interface
 - **Chats**: Match list and conversations
 - **Profile**: User profile and settings
 
 ### Nested Stacks (`chats/_layout.tsx`)
+
 - **Match List**: Shows all matched users
 - **Individual Chat**: Dynamic routing for conversations
 
 ### Navigation Features:
+
 - Tab-based navigation with icons
 - Nested stack navigation for chats
 - Dynamic routing for individual conversations
@@ -164,24 +188,46 @@ The app includes comprehensive mock data:
 
 - **20 User Profiles**: Realistic names, ages, avatars, bios, and interests
 - **Chat Messages**: 15 messages per conversation for 3 matched users
-- **Avatar Service**: UI Avatars for consistent profile pictures
+- **Avatar Services**: Mix of UI Avatars, Unsplash, and Picsum for profile pictures
 - **Location Data**: Various US cities for realistic profiles
+
+## 🔧 Implementation Assumptions & Decisions
+
+### Technical Assumptions Made:
+
+1. **Image Handling**: Used `expo-image` instead of React Native's Image component for better performance and modern API
+2. **Styling**: Applied `style` prop for `expo-image` components to ensure proper rendering
+3. **Function Serialization**: Used `scheduleOnRN` from `react-native-worklets` instead of deprecated `runOnJS` for UI thread communication
+4. **State Management**: Implemented reactive updates to ensure Discovery screen resets when pool is reset
+5. **Navigation**: Used custom headers instead of default tab headers to maintain consistent design
+6. **Card Stacking**: Implemented visual stacking with tilt effects and proper z-index management
+
+### Design Decisions:
+
+1. **UI/UX Enhancements**: Added profile screen with stats, settings, and discovery reset functionality
+2. **Visual Feedback**: Enhanced swipe feedback with "LIKE" and "NOPE" overlays with rotation
+3. **Responsive Design**: Ensured proper scaling and spacing across different screen sizes
+4. **Error Handling**: Added image loading error handling and fallback mechanisms
+5. **Performance**: Optimized re-renders and gesture handling for smooth user experience
 
 ## 🎯 Key Features Implementation
 
 ### Swipe Gestures
+
 - Horizontal drag recognition
 - 40% screen width threshold for swipe confirmation
 - Visual feedback with "LIKE" and "NOPE" overlays
 - Smooth animations using React Native Reanimated
 
 ### Chat System
+
 - Match list with user avatars
 - Individual conversation screens
 - Message bubbles with different styles for sender/receiver
 - Timestamp display and message input
 
 ### Profile Management
+
 - User statistics and match information
 - Settings and preferences
 - Discovery pool reset functionality
@@ -190,12 +236,14 @@ The app includes comprehensive mock data:
 ## 🔧 Development
 
 ### Code Organization
+
 - Components are organized by functionality
 - TypeScript interfaces for type safety
 - Consistent naming conventions
 - Modular state management
 
 ### Performance Optimizations
+
 - Efficient re-renders with Zustand
 - Optimized FlatList components
 - Image caching and optimization
@@ -204,11 +252,13 @@ The app includes comprehensive mock data:
 ## 📱 Build Instructions
 
 ### Development Build
+
 ```bash
 expo start
 ```
 
 ### Production Build
+
 ```bash
 expo build:android
 # or
@@ -216,6 +266,7 @@ expo build:ios
 ```
 
 ### Release APK
+
 ```bash
 expo build:android --type apk
 ```
@@ -223,6 +274,7 @@ expo build:android --type apk
 ## 🧪 Testing
 
 The app includes:
+
 - TypeScript type checking
 - Component testing structure
 - Mock data for consistent testing
