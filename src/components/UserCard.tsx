@@ -16,11 +16,16 @@ const { width: screenWidth } = Dimensions.get('window');
 interface UserCardProps {
   user: User;
   onSwipe: (direction: 'left' | 'right') => void;
-  isTop: boolean;
+  _isTop: boolean;
   stackIndex: number;
 }
 
-export default function UserCard({ user, onSwipe, isTop, stackIndex }: UserCardProps) {
+export default function UserCard({
+  user,
+  onSwipe,
+  _isTop,
+  stackIndex,
+}: UserCardProps) {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const scale = useSharedValue(1);
@@ -33,7 +38,7 @@ export default function UserCard({ user, onSwipe, isTop, stackIndex }: UserCardP
     );
 
     // Stack positioning with tilt
-    const stackScale = 1 - (stackIndex * 0.05);
+    const stackScale = 1 - stackIndex * 0.05;
     const stackTranslateY = stackIndex * 15;
     const stackRotate = stackIndex === 1 ? -3 : stackIndex === 2 ? 3 : 0; // Tilt cards in opposite directions
 
@@ -88,29 +93,33 @@ export default function UserCard({ user, onSwipe, isTop, stackIndex }: UserCardP
     .onStart(() => {
       console.log('Gesture started');
     })
-    .onUpdate((event) => {
+    .onUpdate(event => {
       translateX.value = event.translationX;
       console.log('Gesture updating:', event.translationX);
     })
-    .onEnd((event) => {
+    .onEnd(event => {
       const { translationX, velocityX } = event;
       const threshold = screenWidth * 0.3; // Reduced threshold
-      console.log('Gesture ended:', { 
-        translationX, 
-        velocityX, 
+      console.log('Gesture ended:', {
+        translationX,
+        velocityX,
         threshold,
-        shouldSwipe: Math.abs(translationX) > threshold || Math.abs(velocityX) > 300
+        shouldSwipe:
+          Math.abs(translationX) > threshold || Math.abs(velocityX) > 300,
       });
-      
-      const shouldSwipe = Math.abs(translationX) > threshold || Math.abs(velocityX) > 300;
+
+      const shouldSwipe =
+        Math.abs(translationX) > threshold || Math.abs(velocityX) > 300;
 
       if (shouldSwipe) {
         const direction = translationX > 0 ? 'right' : 'left';
         console.log('Swipe detected:', direction);
         // Animate the card off screen
-        translateX.value = withSpring(direction === 'right' ? screenWidth : -screenWidth);
-            // Call onSwipe using scheduleOnRN to bridge UI thread to JS thread
-            scheduleOnRN(onSwipe, direction);
+        translateX.value = withSpring(
+          direction === 'right' ? screenWidth : -screenWidth
+        );
+        // Call onSwipe using scheduleOnRN to bridge UI thread to JS thread
+        scheduleOnRN(onSwipe, direction);
       } else {
         console.log('Snap back to center');
         // Snap back to center with spring animation
@@ -134,7 +143,10 @@ export default function UserCard({ user, onSwipe, isTop, stackIndex }: UserCardP
           animatedCardStyle,
         ]}
       >
-        <View className="bg-white rounded-3xl shadow-2xl overflow-hidden" style={{ minHeight: 400 }}>
+        <View
+          className="overflow-hidden rounded-3xl bg-white shadow-2xl"
+          style={{ minHeight: 400 }}
+        >
           {/* User Image */}
           <View className="flex-1" style={{ minHeight: 300 }}>
             <Image
@@ -150,16 +162,16 @@ export default function UserCard({ user, onSwipe, isTop, stackIndex }: UserCardP
           <View className="absolute bottom-0 left-0 right-0 bg-black/80 p-6">
             <View className="flex-row items-center justify-between">
               <View>
-                <Text className="text-white text-3xl font-bold">
+                <Text className="text-3xl font-bold text-white">
                   {user.name}, {user.age}
                 </Text>
                 {user.bio && (
-                  <Text className="text-white text-lg mt-1 opacity-90">
+                  <Text className="mt-1 text-lg text-white opacity-90">
                     {user.bio}
                   </Text>
                 )}
                 {user.location && (
-                  <Text className="text-white text-base mt-1 opacity-75">
+                  <Text className="mt-1 text-base text-white opacity-75">
                     📍 {user.location}
                   </Text>
                 )}
@@ -168,13 +180,15 @@ export default function UserCard({ user, onSwipe, isTop, stackIndex }: UserCardP
 
             {/* Interests */}
             {user.interests && user.interests.length > 0 && (
-              <View className="flex-row flex-wrap mt-3">
+              <View className="mt-3 flex-row flex-wrap">
                 {user.interests.slice(0, 3).map((interest, index) => (
                   <View
                     key={index}
-                    className="bg-white/30 rounded-full px-3 py-1 mr-2 mb-2"
+                    className="mb-2 mr-2 rounded-full bg-white/30 px-3 py-1"
                   >
-                    <Text className="text-white text-sm font-medium">{interest}</Text>
+                    <Text className="text-sm font-medium text-white">
+                      {interest}
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -213,7 +227,7 @@ export default function UserCard({ user, onSwipe, isTop, stackIndex }: UserCardP
                 animatedLikeStyle,
               ]}
             >
-              <Text className="text-white font-bold text-2xl">LIKE</Text>
+              <Text className="text-2xl font-bold text-white">LIKE</Text>
             </Animated.View>
 
             <Animated.View
@@ -231,7 +245,7 @@ export default function UserCard({ user, onSwipe, isTop, stackIndex }: UserCardP
                 animatedNopeStyle,
               ]}
             >
-              <Text className="text-white font-bold text-2xl">NOPE</Text>
+              <Text className="text-2xl font-bold text-white">NOPE</Text>
             </Animated.View>
           </Animated.View>
         </View>
