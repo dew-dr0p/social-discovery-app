@@ -280,6 +280,16 @@ The app includes:
 - Mock data for consistent testing
 - Error boundary implementation
 
+## 📱 APK Download
+
+The built APK file is available for download:
+
+**[Download APK from Google Drive](https://drive.google.com/drive/folders/1yKVbZl4oYeni_sy3y5HJVwHCjBuTIotu?usp=sharing)**
+
+- File: `social-discovery-app.apk`
+- Size: 80.6 MB
+- Built with EAS Build for Android
+
 ## 📝 License
 
 This project is created for assessment purposes.
